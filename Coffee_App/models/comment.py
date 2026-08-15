@@ -1,38 +1,21 @@
 from ..extensions import db
 
+
 class Comment(db.Model):
-    __tablename__ = 'Comments'
+    __tablename__ = "Comments"
 
-    id = db.Column(
-        db.BigInteger,
-        primary_key = True,
-        nullable = False,
-        autoincrement = True
-    )
+    id = db.Column(db.BigInteger, primary_key=True, nullable=False, autoincrement=True)
 
-    user_id = db.Column(
-        db.BigInteger,
-        nullable = False
-    )
+    user_id = db.Column(db.BigInteger, nullable=False)
 
-    post_id = db.Column(
-        db.BigInteger,
-        nullable = False
-    )
+    post_id = db.Column(db.BigInteger, nullable=False)
 
-    content = db.Column(
-        db.Text,
-        nullable = False
-    )
+    content = db.Column(db.Text, nullable=False)
 
     created_at = db.Column(
-        db.DateTime,
-        server_default = db.func.current_timestamp(),
-        nullable = False
+        db.DateTime, server_default=db.func.current_timestamp(), nullable=False
     )
 
     updated_at = db.Column(
-        db.DateTime,
-        server_default = db.func.current_timestamp(),
-        nullable = False
-    ) 
+        db.DateTime, server_default=db.func.current_timestamp(), nullable=False
+    )
