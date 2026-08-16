@@ -17,5 +17,8 @@ class Comment(db.Model):
     )
 
     updated_at = db.Column(
-        db.DateTime, server_default=db.func.current_timestamp(), nullable=False
+        db.DateTime,
+        server_default=db.func.current_timestamp(),
+        onupdate=db.func.current_timestamp(),
+        nullable=False,
     )
