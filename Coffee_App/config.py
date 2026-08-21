@@ -2,12 +2,8 @@ import os
 
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = (
-        f"mysql+pymysql://"
-        f"{os.getenv('MYSQL_USER')}:"
-        f"{os.getenv('MYSQL_PASSWORD')}@"
-        f"db:3306/"
-        f"{os.getenv('MYSQL_DATABASE')}"
-    )
-
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    MYSQL_HOST = os.getenv("MYSQL_HOST", "db")
+    MYSQL_PORT = int(os.getenv("MYSQL_PORT", 3306))
+    MYSQL_USER = os.getenv("MYSQL_USER")
+    MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
+    MYSQL_DATABASE = os.getenv("MYSQL_DATABASE")
