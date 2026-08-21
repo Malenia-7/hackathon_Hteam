@@ -157,3 +157,23 @@ class User:
 
         finally:
             connection.close()
+
+    @staticmethod
+    def find_active_by_email(email):
+        connection = get_db_connection()
+
+        try:
+            with connection.cursor() as cursor:
+                sql = """
+                    SELECT *
+                    FROM users
+                    WHERE email = %s
+                    AND deleted_at IS NULL
+                """
+
+                cursor.execute(sql, (email,))
+
+                return cursor.fetchone()
+
+        finally:
+            connection.close()

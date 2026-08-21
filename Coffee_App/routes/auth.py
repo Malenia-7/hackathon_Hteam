@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from Coffee_App.models.user import User
@@ -69,7 +69,7 @@ def login():
 
     try:
         # メールアドレスからユーザーを検索
-        user = User.find_by_email(email)
+        user = User.find_active_by_email(email)
 
         # ユーザーが存在しない
         if not user:
@@ -86,6 +86,9 @@ def login():
                 "message": "Invalid email or password."
             }, 401
 
+        # ログイン状態をSessionに保存
+        session["user_id"] = user["id"]
+
         # ログイン成功
         return {
             "message": "Login successful!",
@@ -97,3 +100,11 @@ def login():
         return {
             "message": f"Login failed: {e}"
         }, 500
+
+@auth_bp.route("/logout", methods=["POST"])
+def logout():
+    session.clear()
+
+    return {
+        "message": "Logout successful!"
+    }, 200
