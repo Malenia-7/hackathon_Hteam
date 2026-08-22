@@ -1,5 +1,6 @@
 from flask import Blueprint, request, render_template
 from Coffee_App.models.category import get_categories
+from Coffee_App.models.post import search_posts
 
 search_bp = Blueprint("search", __name__)
 
@@ -11,11 +12,12 @@ def search_page():
     category = request.args.get("category", "")
 
     if keyword or category:
-        # TODO: post.py確認後、投稿検索処理を追加
+        posts = search_posts(keyword, category)
         return render_template(
             "search/search_results.html",
             keyword=keyword,
             category=category,
+            posts=posts,
         )
 
     categories = get_categories()
