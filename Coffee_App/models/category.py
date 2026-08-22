@@ -7,7 +7,11 @@ def get_categories():
     cr = conn.cursor()
 
     try:
-        sql = """SELECT category_name FROM categories;"""
+        sql = """
+            SELECT 
+            categories.id, categories.category_name
+            FROM categories;
+        """
         cr.execute(sql)
         categories = cr.fetchall()
 
@@ -23,7 +27,11 @@ def get_category(category_id):
     cr = conn.cursor()
 
     try:
-        sql = """SELECT category_name FROM categories WHERE id=%s;"""
+        sql = """
+            SELECT 
+            id, category_name 
+            FROM categories WHERE id=%s;
+            """
         cr.execute(sql, (category_id,))
         category_name = cr.fetchone()
 
