@@ -1,16 +1,26 @@
-from Coffee_App.models.comment import Comment
 from flask import Blueprint, request, render_template
+from Coffee_App.models.category import get_categories
 
 search_bp = Blueprint("search", __name__)
 
 
+# 検索画面の表示
 @search_bp.route("/search")
-def search():
-    keyword = request.args.get("q", "")
+def search_page():
+    keyword = request.args.get("keyword", "")
+    category = request.args.get("category", "")
 
-    if keyword:
-        comments = Comment.query.filter(Comment.content.like(f"%{keyword}%")).all()
-    else:
-        comments = []
+    if keyword or category:
+        # TODO: post.py確認後、投稿検索処理を追加
+        return render_template(
+            "search/search_results.html",
+            keyword=keyword,
+            category=category,
+        )
 
-    return render_template("search/search.html", comments=comments, keyword=keyword)
+    categories = get_categories()
+
+    return render_template(
+        "search/search.html",
+        categories=categories,
+    )
