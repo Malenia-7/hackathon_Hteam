@@ -4,6 +4,7 @@
 
 {% block page_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/timeline.css') }}">
+<link rel="stylesheet" href="../static/css/timeline.css">
 {% endblock %}
 
 {% block content %}
@@ -15,59 +16,54 @@
     </div>
 
     {% if posts %}
-        <div class="post-list">
-            {% for post in posts %}
-                <article class="post-card">
-                    <header class="post-user">
-                        <a href="{{ url_for('users.profile', user_id=post.user.id) }}">
-                            <img src="{{ post.user.profile_image_url or url_for('static', filename='images/default_icon.png') }}"
-                                 alt="{{ post.user.username }}さんのアイコン"
-                                 class="user-icon"
-                            >
-                            
-                            <span>{{ post.user.username }}</span>
-                        </a>
-                    </header>
+    <div class="post-list">
+        {% for post in posts %}
+        <article class="post-card">
+            <header class="post-user">
+                <a href="{{ url_for('users.profile', user_id=post.user.id) }}">
+                    <img src="{{ post.user.profile_image_url or url_for('static', filename='images/default_icon.png') }}"
+                        alt="{{ post.user.username }}さんのアイコン" class="user-icon">
 
-                    {% if post.category %}
-                        <p class="category">
-                            {{ post.category.category_name }}
-                        </p>
-                    {% endif %}
+                    <span>{{ post.user.username }}</span>
+                </a>
+            </header>
 
-                    <p class="post-content">
-                        {{ post.content }}
-                    </p>
+            {% if post.category %}
+            <p class="category">
+                {{ post.category.category_name }}
+            </p>
+            {% endif %}
 
-                    {% if post.images %}
-                        <div class="post-images">
-                            {% for image in post.images %}
-                                <img src="{{ image.image_url }}" 
-                                     alt="投稿画像" 
-                                     loading="lazy"
-                                >
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+            <p class="post-content">
+                {{ post.content }}
+            </p>
 
-                    <footer class="post-footer">
-                        <a href="{{ url_for('posts.detail', post_id=post.id) }}">
-                            コメント {{ post.comments|length }}件
-                        </a>
+            {% if post.images %}
+            <div class="post-images">
+                {% for image in post.images %}
+                <img src="{{ image.image_url }}" alt="投稿画像" loading="lazy">
+                {% endfor %}
+            </div>
+            {% endif %}
 
-                        <span>
-                            リアクション {{ post.reactions|length }}件
-                        </span>
+            <footer class="post-footer">
+                <a href="{{ url_for('posts.detail', post_id=post.id) }}">
+                    コメント {{ post.comments|length }}件
+                </a>
 
-                        <time datetime="{{ post.created_at.isoformat() }}">
-                            {{ post.created_at.strftime('%Y年%m月%d日 %H:%M') }}
-                        </time>
-                    </footer>
-                </article>
-            {% endfor %}
-        </div>
+                <span>
+                    リアクション {{ post.reactions|length }}件
+                </span>
+
+                <time datetime="{{ post.created_at.isoformat() }}">
+                    {{ post.created_at.strftime('%Y年%m月%d日 %H:%M') }}
+                </time>
+            </footer>
+        </article>
+        {% endfor %}
+    </div>
     {% else %}
-        <p>まだ投稿がありません。</p>
+    <p>まだ投稿がありません。</p>
     {% endif %}
 </section>
 {% endblock %}
