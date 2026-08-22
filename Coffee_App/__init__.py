@@ -1,8 +1,9 @@
 from flask import Flask
-from sqlalchemy import text
 
 from Coffee_App.config import Config
-from Coffee_App.extensions import db
+from Coffee_App.database import get_db_connection
+from Coffee_App.routes.auth import auth_bp
+from Coffee_App.routes.users import users_bp
 
 
 def create_app():
@@ -10,7 +11,8 @@ def create_app():
 
     app.config.from_object(Config)
 
-    db.init_app(app)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(users_bp)
 
     @app.route("/")
     def index():
@@ -19,8 +21,15 @@ def create_app():
     @app.route("/db-test")
     def db_test():
         try:
-            db.session.execute(text("SELECT 1"))
+            connection = get_db_connection()
+
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT 1")
+
+            connection.close()
+
             return "Database connection successful!"
+
         except Exception as e:
             return f"Database connection failed: {e}", 500
 
