@@ -10,7 +10,7 @@ def get_comments(post_id):
     try:
         sql = """
             SELECT 
-            comments.content, users.username, comments.created_at 
+            comments.content, users.username, comments.created_at, comments.id
             FROM comments 
             JOIN users 
             ON comments.user_id = users.id  
