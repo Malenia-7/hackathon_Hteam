@@ -1,7 +1,7 @@
 from pathlib import Path
 from uuid import uuid4
 
-from flask import Blueprint, current_app, jsonify, request
+from flask import Blueprint, current_app, jsonify, request, session
 
 from Coffee_App.database import get_db
 from Coffee_App.models.image import find_images_by_post_id, insert_images
@@ -32,6 +32,10 @@ def _serialize_post(post, images):
 
 @posts_bp.post("/posts")
 def create_post():
+    user_id = session.get("user_id")
+    if user_id is None:
+        return jsonify({"error": "ログインが必要です。"}), 401
+
     content = request.form.get("content", "").strip()
     if not content:
         return jsonify({"error": "本文は必須です。"}), 400
@@ -57,10 +61,9 @@ def create_post():
 
         connection = get_db()
         with connection.cursor() as cursor:
-            # TODO: 認証機能の統合時にログイン中のユーザーIDへ置き換える。
             post_id = insert_post(
                 cursor,
-                user_id=current_app.config["DEV_USER_ID"],
+                user_id=user_id,
                 content=content,
             )
             insert_images(cursor, post_id, image_urls)
