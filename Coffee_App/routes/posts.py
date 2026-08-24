@@ -1,7 +1,7 @@
 from pathlib import Path
 from uuid import uuid4
 
-from flask import Blueprint, current_app, jsonify, request, session
+from flask import Blueprint, current_app, jsonify, render_template, request, session
 
 from Coffee_App.database import get_db
 from Coffee_App.models.image import find_images_by_post_id, insert_images
@@ -28,6 +28,11 @@ def _serialize_post(post, images):
         "created_at": post["created_at"].isoformat(),
         "updated_at": post["updated_at"].isoformat(),
     }
+
+
+@posts_bp.get("/posts/create")
+def create_page():
+    return render_template("posts/post_create.html")
 
 
 @posts_bp.post("/posts")

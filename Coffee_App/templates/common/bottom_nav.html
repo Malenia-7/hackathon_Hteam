@@ -1,4 +1,4 @@
-{% if current_user.is_authenticated %}
+{% if session.get("user_id") %}
 <nav class="bottom-nav" aria-label="メインメニュー">
     <a href="{{ url_for('posts.timeline') }}" class="bottom-nav__item">
         <span class="bottom-nav__label">ホーム</span>
