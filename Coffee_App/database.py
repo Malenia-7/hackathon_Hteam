@@ -1,18 +1,28 @@
 import pymysql
+from flask import current_app, g
 
-from Coffee_App.config import Config
+
+def get_db():
+    if "db" not in g:
+        g.db = pymysql.connect(
+            host=current_app.config["MYSQL_HOST"],
+            port=current_app.config["MYSQL_PORT"],
+            user=current_app.config["MYSQL_USER"],
+            password=current_app.config["MYSQL_PASSWORD"],
+            database=current_app.config["MYSQL_DATABASE"],
+            charset=current_app.config["MYSQL_CHARSET"],
+            cursorclass=pymysql.cursors.DictCursor,
+            autocommit=False,
+        )
+
+    return g.db
 
 
-def get_db_connection():
-    connection = pymysql.connect(
-        host=Config.MYSQL_HOST,
-        port=Config.MYSQL_PORT,
-        user=Config.MYSQL_USER,
-        password=Config.MYSQL_PASSWORD,
-        database=Config.MYSQL_DATABASE,
-        charset="utf8mb4",
-        use_unicode=True,
-        cursorclass=pymysql.cursors.DictCursor
-    )
+def close_db(_exception=None):
+    connection = g.pop("db", None)
+    if connection is not None:
+        connection.close()
 
-    return connection
+
+def init_app(app):
+    app.teardown_appcontext(close_db)

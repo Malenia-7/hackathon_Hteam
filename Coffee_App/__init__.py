@@ -1,8 +1,9 @@
 from flask import Flask
 
 from Coffee_App.config import Config
-from Coffee_App.database import get_db_connection
+from Coffee_App.database import get_db, init_app
 from Coffee_App.routes.auth import auth_bp
+from Coffee_App.routes.posts import posts_bp
 from Coffee_App.routes.users import users_bp
 
 
@@ -11,7 +12,9 @@ def create_app():
 
     app.config.from_object(Config)
 
+    init_app(app)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(posts_bp)
     app.register_blueprint(users_bp)
 
     @app.route("/")
@@ -21,16 +24,11 @@ def create_app():
     @app.route("/db-test")
     def db_test():
         try:
-            connection = get_db_connection()
-
+            connection = get_db()
             with connection.cursor() as cursor:
                 cursor.execute("SELECT 1")
-
-            connection.close()
-
             return "Database connection successful!"
-
         except Exception as e:
             return f"Database connection failed: {e}", 500
-
+            
     return app

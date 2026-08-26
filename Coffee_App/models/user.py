@@ -1,4 +1,4 @@
-from Coffee_App.database import get_db_connection
+from Coffee_App.database import get_db
 
 
 class User:
@@ -28,28 +28,21 @@ class User:
 
     @staticmethod
     def find_by_email(email):
-        connection = get_db_connection()
+        connection = get_db()
 
-        try:
-            with connection.cursor() as cursor:
-                sql = """
-                    SELECT *
-                    FROM users
-                    WHERE email = %s
-                """
+        with connection.cursor() as cursor:
+            sql = """
+                SELECT *
+                FROM users
+                WHERE email = %s
+            """
 
-                cursor.execute(sql, (email,))
-
-                user = cursor.fetchone()
-
-                return user
-
-        finally:
-            connection.close()
+            cursor.execute(sql, (email,))
+            return cursor.fetchone()
 
     @staticmethod
     def create(username, email, password_hash):
-        connection = get_db_connection()
+        connection = get_db()
 
         try:
             with connection.cursor() as cursor:
@@ -77,33 +70,24 @@ class User:
             connection.rollback()
             raise
 
-        finally:
-            connection.close()
     @staticmethod
     def find_by_id(user_id):
-        connection = get_db_connection()
+        connection = get_db()
 
-        try:
-            with connection.cursor() as cursor:
-                sql = """
-                    SELECT *
-                    FROM users
-                    WHERE id = %s
-                        AND deleted_at IS NULL
-                """
+        with connection.cursor() as cursor:
+            sql = """
+                SELECT *
+                FROM users
+                WHERE id = %s
+                    AND deleted_at IS NULL
+            """
 
-                cursor.execute(sql, (user_id,))
-
-                user = cursor.fetchone()
-
-                return user
-
-        finally:
-            connection.close()
+            cursor.execute(sql, (user_id,))
+            return cursor.fetchone()
 
     @staticmethod
     def update(user_id, username, profile_text):
-        connection = get_db_connection()
+        connection = get_db()
 
         try:
             with connection.cursor() as cursor:
@@ -127,12 +111,10 @@ class User:
             connection.rollback()
             raise
 
-        finally:
-            connection.close()
 
     @staticmethod
     def delete(user_id):
-        connection = get_db_connection()
+        connection = get_db()
 
         try:
             with connection.cursor() as cursor:
@@ -155,25 +137,18 @@ class User:
             connection.rollback()
             raise
 
-        finally:
-            connection.close()
 
     @staticmethod
     def find_active_by_email(email):
-        connection = get_db_connection()
+        connection = get_db()
 
-        try:
-            with connection.cursor() as cursor:
-                sql = """
-                    SELECT *
-                    FROM users
-                    WHERE email = %s
-                    AND deleted_at IS NULL
-                """
+        with connection.cursor() as cursor:
+            sql = """
+                SELECT *
+                FROM users
+                WHERE email = %s
+                AND deleted_at IS NULL
+            """
 
-                cursor.execute(sql, (email,))
-
-                return cursor.fetchone()
-
-        finally:
-            connection.close()
+            cursor.execute(sql, (email,))
+            return cursor.fetchone()
