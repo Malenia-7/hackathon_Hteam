@@ -5,7 +5,7 @@ from flask import Blueprint, current_app, jsonify, render_template, request, ses
 
 from Coffee_App.database import get_db
 from Coffee_App.models.image import find_images_by_post_id, insert_images
-from Coffee_App.models.post import find_post_by_id, insert_post
+from Coffee_App.models.post import delete_post, find_post_by_id, find_posts, insert_post
 
 
 posts_bp = Blueprint("posts", __name__)
@@ -87,6 +87,19 @@ def create_post():
     return jsonify(_serialize_post(post, images)), 201
 
 
+@posts_bp.get("/posts")
+def get_posts():
+    connection = get_db()
+    with connection.cursor() as cursor:
+        posts = find_posts(cursor)
+        result = [
+            _serialize_post(post, find_images_by_post_id(cursor, post["id"]))
+            for post in posts
+        ]
+
+    return jsonify(result), 200
+
+
 @posts_bp.get("/posts/<int:post_id>")
 def get_post(post_id):
     try:
@@ -101,3 +114,22 @@ def get_post(post_id):
         return jsonify({"error": "投稿の取得に失敗しました。"}), 500
 
     return jsonify(_serialize_post(post, images)), 200
+
+
+@posts_bp.route("/posts/<int:post_id>", methods=["DELETE", "POST"])
+def post_delete(post_id):
+    user_id = session.get("user_id")
+    if user_id is None:
+        return jsonify({"error": "ログインが必要です。"}), 401
+
+    connection = get_db()
+    with connection.cursor() as cursor:
+        post = find_post_by_id(cursor, post_id)
+        if post is None:
+            return jsonify({"error": "投稿が見つかりません。"}), 404
+        if post["user_id"] != user_id:
+            return jsonify({"error": "この投稿は削除できません。"}), 403
+        delete_post(cursor, post_id)
+    connection.commit()
+
+    return jsonify({"message": "投稿を削除しました。"}), 200
