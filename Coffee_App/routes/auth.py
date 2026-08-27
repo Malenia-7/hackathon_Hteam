@@ -1,4 +1,4 @@
-from flask import Blueprint, request, session, render_template
+from flask import Blueprint, redirect, render_template, request, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from Coffee_App.models.user import User
@@ -13,14 +13,13 @@ def auth_test():
 
 
 @auth_bp.route("/signup", methods=["GET", "POST"])
-def register():
+def signup():
     if request.method == "GET":
         return render_template("auth/signup.html")
-    data = request.get_json()
 
-    username = data.get("username")
-    email = data.get("email")
-    password = data.get("password")
+    username = request.form.get("username", "").strip()
+    email = request.form.get("email", "").strip()
+    password = request.form.get("password", "")
 
     # 必須項目チェック
     if not username or not email or not password:
@@ -47,9 +46,7 @@ def register():
             password_hash
         )
 
-        return {
-            "message": "User registered successfully!"
-        }, 201
+        return redirect(url_for("auth.login"))
 
     except Exception as e:
         return {
@@ -92,12 +89,8 @@ def login():
         # ログイン状態をSessionに保存
         session["user_id"] = user["id"]
 
-        # ログイン成功
-        return {
-            "message": "Login successful!",
-            "user_id": user["id"],
-            "username": user["username"]
-        }, 200
+        # ログイン成功後はタイムラインへ移動
+        return redirect(url_for("posts.timeline"))
 
     except Exception as e:
         return {
