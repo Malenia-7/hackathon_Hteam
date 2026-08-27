@@ -34,6 +34,9 @@ def _serialize_post(post, images):
 def create_page():
     return render_template("posts/post_create.html")
 
+@posts_bp.get("/posts/timeline")
+def timeline():
+    return render_template("posts/timeline.html")
 
 @posts_bp.post("/posts")
 def create_post():
@@ -133,3 +136,4 @@ def post_delete(post_id):
     connection.commit()
 
     return jsonify({"message": "投稿を削除しました。"}), 200
+
