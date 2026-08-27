@@ -1,4 +1,4 @@
-from flask import Blueprint, request, session
+from flask import Blueprint, request, session, render_template
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from Coffee_App.models.user import User
@@ -12,8 +12,10 @@ def auth_test():
     return "Auth route is working!"
 
 
-@auth_bp.route("/register", methods=["POST"])
+@auth_bp.route("/signup", methods=["GET", "POST"])
 def register():
+    if request.method == "GET":
+        return render_template("auth/signup.html")
     data = request.get_json()
 
     username = data.get("username")
@@ -54,12 +56,13 @@ def register():
             "message": f"User registration failed: {e}"
         }, 500
 
-@auth_bp.route("/login", methods=["POST"])
+@auth_bp.route("/login", methods=["GET", "POST"])
 def login():
-    data = request.get_json()
+    if request.method == "GET":
+        return render_template("auth/login.html")
 
-    email = data.get("email")
-    password = data.get("password")
+    email = request.form.get("email")
+    password = request.form.get("password")
 
     # 必須項目チェック
     if not email or not password:
