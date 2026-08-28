@@ -6,6 +6,7 @@ from flask import Blueprint, current_app, jsonify, render_template, request, ses
 from Coffee_App.database import get_db
 from Coffee_App.models.image import find_images_by_post_id, insert_images
 from Coffee_App.models.post import delete_post, find_post_by_id, find_posts, insert_post
+from Coffee_App.models.category import get_categories
 
 
 posts_bp = Blueprint("posts", __name__)
@@ -32,7 +33,13 @@ def _serialize_post(post, images):
 
 @posts_bp.get("/posts/create")
 def post_create():
-    return render_template("posts/post_create.html")
+
+    categories = get_categories()
+
+    return render_template(
+        "posts/post_create.html",
+        categories=categories
+    )
 
 @posts_bp.get("/posts/timeline")
 def timeline():

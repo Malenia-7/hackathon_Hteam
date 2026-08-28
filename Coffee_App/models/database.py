@@ -10,4 +10,5 @@ def get_db_connection():
         database=os.getenv("MYSQL_DATABASE"),
         port=3306,
         cursorclass=pymysql.cursors.DictCursor,
+        charset="utf8mb4"
     )

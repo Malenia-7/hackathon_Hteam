@@ -3,7 +3,7 @@
 {% block title %}投稿する - ぬまりば {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/posts.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/post/posts_create.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -40,7 +40,9 @@
                     {% for category in categories %}
                         <option 
                             value="{{ category.id }}" 
-                            {% if request.form.get('category_id')|int == category.id %}selected{% endif %}>
+                            {% if request.form.get('category_id')|int == category.id %}
+                                selected
+                            {% endif %}>
 
                             {{ category.category_name }}
                         </option>
